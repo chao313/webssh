@@ -59,26 +59,25 @@ function check() {
     return validResult["host"] && validResult["port"] && validResult["username"];
 }
 
+function queryUrlParam(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); // 匹配目标参数
+    var result = window.location.search.substr(1).match(reg); // 对querystring匹配目标参数
+    if (result != null) {
+        return decodeURIComponent(result[2]);
+    } else {
+        return null;
+    }
+}
+
 function connect() {
     var remember = $("#remember").is(":checked")
     var options = {
-        host: $("#host").val(),
-        port: $("#port").val(),
-        username: $("#username").val(),
-        ispwd: $("input[name=ispwd]:checked").val(),
-        secret: $("#secret").val(),
+        host: queryUrlParam("host"),
+        port: queryUrlParam("port"),
+        username: queryUrlParam("account"),
+        secret: queryUrlParam("password")
     }
-    if (remember) {
-        store(options)
-    }
-    if (check()) {
-        openTerminal(options)
-    } else {
-        for (var key in validResult) {
-            if (!validResult[key]) {
-                alert(errorMsg[key]);
-                break;
-            }
-        }
-    }
+    openTerminal(options)
+
 }
+connect();
